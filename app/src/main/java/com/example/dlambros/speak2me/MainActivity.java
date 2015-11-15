@@ -9,7 +9,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
@@ -17,6 +20,10 @@ public class MainActivity extends AppCompatActivity
     // String for logging
     private final String TAG = this.getClass().getSimpleName();
     private ImageButton mRecord;
+    private CheckBox mEncrypt;
+    private Button mSend;
+    private Button mView;
+    private TextView mTextView;
     private boolean pressed = false;
 
     class RecordTask extends AsyncTask<Void, Void, Void>
@@ -78,7 +85,10 @@ public class MainActivity extends AppCompatActivity
                 return true;
             }
         });
-
+        mEncrypt = (CheckBox) findViewById(R.id.encrypt);
+        mTextView = (TextView) findViewById(R.id.text);
+        mSend = (Button) findViewById(R.id.send);
+        mView = (Button) findViewById(R.id.view);
     }
 
     @Override
