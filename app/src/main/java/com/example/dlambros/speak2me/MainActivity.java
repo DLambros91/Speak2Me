@@ -1,22 +1,84 @@
 package com.example.dlambros.speak2me;
 
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
 {
     // String for logging
     private final String TAG = this.getClass().getSimpleName();
+    private ImageButton mRecord;
+    private boolean pressed = false;
 
+    class RecordTask extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... arg)
+        {
+            new Thread()
+            {
+                public void run()
+                {
+                    MainActivity.this.runOnUiThread(new Runnable()
+                    {
+                        public void run()
+                        {
+                            //Do your UI operations like dialog opening or Toast here
+                            Toast.makeText(MainActivity.this, "Recording Started (Not implemented)", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }.start();
+            return null;
+        }
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mRecord = (ImageButton) findViewById(R.id.record);
+        mRecord.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())
+                {
+                    case MotionEvent.ACTION_DOWN:
+                    {
+                        v.setPressed(true);
+                        if (pressed == false)
+                        {
+                            pressed = true;
+                            new RecordTask().execute();
+                        }
+                        break;
+                    }
+                    case MotionEvent.ACTION_CANCEL:
+
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    {
+                        v.setPressed(false);
+                        Toast.makeText(MainActivity.this, "Recording Stopped",Toast.LENGTH_SHORT).show();
+                        pressed = false;
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
+
     }
 
     @Override

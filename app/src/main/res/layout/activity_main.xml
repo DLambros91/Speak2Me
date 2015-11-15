@@ -21,6 +21,7 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/record"
             android:src="@drawable/selector"
             android:gravity="center"
             android:adjustViewBounds="true"
@@ -39,5 +40,22 @@
             android:layout_height="wrap_content"
             android:text="@string/enter_text"
             android:gravity="center"/>
+    </LinearLayout>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:editable="false"
+        android:textIsSelectable="true"
+        android:text="@string/default_text"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:gravity="left"
+        android:orientation="vertical">
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/encrypt"/>
     </LinearLayout>
 </LinearLayout>

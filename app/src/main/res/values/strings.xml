@@ -2,4 +2,6 @@
     <string name="app_name">Speak2Me</string>
     <string name="enter_text">Please press and speak.</string>
     <string name="action_settings">Settings</string>
+    <string name="encrypt">Encrypt message?</string>
+    <string name="default_text">Recorded text</string>
 </resources>
