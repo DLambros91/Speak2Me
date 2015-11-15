@@ -26,6 +26,9 @@ public class MainActivity extends AppCompatActivity
     private TextView mTextView;
     private boolean pressed = false;
 
+    // SQL Database for storage
+    Database myDB;
+
     class RecordTask extends AsyncTask<Void, Void, Void>
     {
         @Override
@@ -49,11 +52,30 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
+
+    /**
+     * Database Functionality
+     */
+    public void deleteDB()
+    {
+        //mDelete.setOnClickListener(new View.OnClickListener() {
+        //    @Override
+        //    public void onClick(View v) {
+        //        myDB.deleteAllData();
+        //    }
+      //  });
+    }
+
+    /**
+     * Life-cycle Functionality
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        myDB = new Database(this);
 
         mRecord = (ImageButton) findViewById(R.id.record);
         mRecord.setOnTouchListener(new View.OnTouchListener() {
