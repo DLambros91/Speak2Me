@@ -1,7 +1,9 @@
 package com.example.dlambros.speak2me;
 
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity
     private CheckBox mEncrypt;
     private Button mSend;
     private Button mView;
+    private Button mDelete;
     private TextView mTextView;
     private boolean pressed = false;
 
@@ -58,14 +61,52 @@ public class MainActivity extends AppCompatActivity
      */
     public void deleteDB()
     {
-        //mDelete.setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View v) {
-        //        myDB.deleteAllData();
-        //    }
-      //  });
+        mDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myDB.deleteAllData();
+            }
+        });
     }
 
+    public void viewLog()
+    {
+        mView.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Cursor res = myDB.getAllData();
+                if (res.getCount() == 0)
+                {
+                    showMessage("Error", "Nothing Found");
+                    return;
+                }
+
+                StringBuffer buffer = new StringBuffer();
+                while (res.moveToNext())
+                {
+                    buffer.append("Id : " + res.getString(0) + "\n");
+                    buffer.append("Received Text : " + res.getString(1) + "\n");
+                    buffer.append("Date : " + res.getString(2) + "\n");
+                    buffer.append("Detected Language : " + res.getString(3) + "\n");
+                    buffer.append("Translated Language : " + res.getString(4) + "\n");
+                }
+
+                // Show all data
+                showMessage("Data", buffer.toString());
+            }
+        });
+    }
+
+    public void showMessage(String title, String message)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.show();
+    }
     /**
      * Life-cycle Functionality
      */
@@ -111,6 +152,9 @@ public class MainActivity extends AppCompatActivity
         mTextView = (TextView) findViewById(R.id.text);
         mSend = (Button) findViewById(R.id.send);
         mView = (Button) findViewById(R.id.view);
+        mDelete = (Button) findViewById(R.id.delete);
+        viewLog();
+        deleteDB();
     }
 
     @Override

@@ -5,7 +5,8 @@
     <string name="encrypt">Encrypt message?</string>
     <string name="default_text">Recorded text</string>
     <string name="view_logs">View Logs</string>
-    <string name="send">Send Translation</string>
+    <string name="send">Send</string>
+    <string name="delete">Delete Log</string>
     <string name="detected">Language detected:</string>
     <string name="translate">Translate to:</string>
 </resources>
