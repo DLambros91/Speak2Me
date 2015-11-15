@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Speak2Me</string>
+    <string name="enter_text">Please press and speak.</string>
 </resources>
