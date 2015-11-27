@@ -44,16 +44,23 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:editable="false"
+            android:id="@+id/recorded"
+            android:textIsSelectable="true"
+            android:text="@string/default_text"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:editable="false"
             android:textIsSelectable="true"
-            android:text="@string/default_text"/>
+            android:text="@string/default2"/>
     </LinearLayout>
 
-    <LinearLayout
+  <!--  <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
@@ -64,7 +71,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/encrypt"
             android:text="@string/encrypt"/>
-    </LinearLayout>
+    </LinearLayout> -->
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/RelativeLayout01"
@@ -83,26 +90,22 @@
             android:layout_alignParentRight="true"
             android:text="@string/translate"/>
     </RelativeLayout>
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/RelativeLayout02"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp">
-        <ExpandableListView
-            android:layout_width="wrap_content"
+    <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:padding="10dp"
+                  android:weightSum="2"
+                  android:orientation="horizontal">
+        <Spinner
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true">
-
-        </ExpandableListView>
-
-        <ExpandableListView
-            android:layout_width="wrap_content"
+            android:id="@+id/input"
+            android:layout_weight="1"/>
+        <Spinner
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true">
-
-        </ExpandableListView>
-    </RelativeLayout>
+            android:id="@+id/output"
+            android:layout_weight="1"/>
+    </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
