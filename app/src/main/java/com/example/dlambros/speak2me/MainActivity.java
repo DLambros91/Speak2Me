@@ -1,9 +1,11 @@
 package com.example.dlambros.speak2me;
 
 import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
@@ -12,7 +14,6 @@ import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.content.ClipboardManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -189,11 +190,24 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         mCopy = (ImageButton) findViewById(R.id.copy);
         mCopyTranslation = (ImageButton) findViewById(R.id.copytranslate);
 
+        mSend = (ImageButton) findViewById(R.id.send);
+        mSendTranslation = (ImageButton) findViewById(R.id.sendtranslate);
+
+        mSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                sendIntent.setData(Uri.parse("sms:"));
+                sendIntent.putExtra("sms_body", mRecorded.getText());
+                startActivity(sendIntent);
+            }
+        });
+
         mCopy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ClipboardManager clipboard = (ClipboardManager)   getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("Copied", mRecorded.getText());
+                ClipData clip = ClipData.newPlainText("Copied", mTranslated.getText());
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(MainActivity.this, "Text copied to clipboard!", Toast.LENGTH_SHORT).show();
             }
