@@ -1,5 +1,7 @@
 package com.example.dlambros.speak2me;
 
+import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -10,6 +12,7 @@ import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.content.ClipboardManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,6 +48,12 @@ public class MainActivity extends AppCompatActivity
     private CheckBox mEncrypt;
 
     private ImageButton mSend;
+    private ImageButton mSendTranslation;
+
+    private ImageButton mCopy;
+    private ImageButton mCopyTranslation;
+
+
     private ImageButton mView;
     private ImageButton mDelete;
 
@@ -80,7 +89,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
                 Translate.setClientId("DDRX");
                 Translate.setClientSecret("AndHisNameIsJohnCena");
                 // System.out.println("Phrase is " + phrase);
-                translation = Translate.execute(phrase, Language.SPANISH).toString();
+                translation = Translate.execute(phrase, Language.CHINESE_TRADITIONAL).toString();
                 speakTranslation(translation);
             }
             catch (Exception e) {
@@ -101,7 +110,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
 
     private void speakTranslation(String translation)
     {
-        mTextToSpeech.setLanguage(SPANISH);
+        mTextToSpeech.setLanguage(Locale.CHINESE);
         mTextToSpeech.speak(translation, TextToSpeech.QUEUE_FLUSH, null, "translation");
     }
 
@@ -177,6 +186,29 @@ class RecordTask extends AsyncTask<Void, Void, Void>
 
         mRecord = (ImageButton) findViewById(R.id.record);
 
+        mCopy = (ImageButton) findViewById(R.id.copy);
+        mCopyTranslation = (ImageButton) findViewById(R.id.copytranslate);
+
+        mCopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager)   getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Copied", mRecorded.getText());
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(MainActivity.this, "Text copied to clipboard!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mCopyTranslation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager)   getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Copied", mTranslated.getText());
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(MainActivity.this, "Translation copied to clipboard!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
 
         mTextToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -185,6 +217,8 @@ class RecordTask extends AsyncTask<Void, Void, Void>
 
             }
         });
+
+
 
         SpeechRecognitionListener listener = new SpeechRecognitionListener();
         mSpeechRecognizer.setRecognitionListener(listener);

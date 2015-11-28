@@ -18,8 +18,8 @@
         android:orientation="horizontal" android:weightSum="1">
 
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="155dp"
+            android:layout_height="155dp"
             android:id="@+id/record"
             android:src="@drawable/selector"
             android:gravity="center"
@@ -52,6 +52,21 @@
             android:id="@+id/recorded"
             android:textIsSelectable="true"
             android:text="@string/default_text"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/copy"
+            android:src="@drawable/copy"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/send"
+                android:src="@drawable/sms"/>
+    </LinearLayout>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -59,6 +74,23 @@
             android:id="@+id/translated"
             android:textIsSelectable="true"
             android:text="@string/default2"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/copytranslate"
+                android:src="@drawable/copy"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/sendtranslate"
+                android:src="@drawable/sms"/>
+        </LinearLayout>
+
     </LinearLayout>
 
   <!--  <LinearLayout
@@ -116,17 +148,12 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/send"
-            android:src="@drawable/sms"/>
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/view"
             android:src="@drawable/view"/>
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/delete"
-            android:src="@drawable/delete"/>
-</LinearLayout>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/delete"
+        android:src="@drawable/delete"/>
+    </LinearLayout>
 </LinearLayout>
