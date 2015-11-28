@@ -17,7 +17,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -45,9 +44,9 @@ public class MainActivity extends AppCompatActivity
 
     private CheckBox mEncrypt;
 
-    private Button mSend;
-    private Button mView;
-    private Button mDelete;
+    private ImageButton mSend;
+    private ImageButton mView;
+    private ImageButton mDelete;
 
     private Spinner inLang;
     private Spinner outLang;
@@ -239,9 +238,9 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         });
        // mEncrypt = (CheckBox) findViewById(R.id.encrypt);
         mTextView = (TextView) findViewById(R.id.text);
-        mSend = (Button) findViewById(R.id.send);
-        mView = (Button) findViewById(R.id.view);
-        mDelete = (Button) findViewById(R.id.delete);
+        mSend = (ImageButton) findViewById(R.id.send);
+        mView = (ImageButton) findViewById(R.id.view);
+        mDelete = (ImageButton) findViewById(R.id.delete);
         inLang = (Spinner) findViewById(R.id.input);
         outLang = (Spinner) findViewById(R.id.output);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.languages, android.R.layout.simple_spinner_item);

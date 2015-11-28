@@ -113,20 +113,20 @@
         android:orientation="horizontal"
         android:gravity="center"
         android:layout_gravity="center">
-        <Button
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/send"
-            android:text="@string/send"/>
-        <Button
+            android:src="@drawable/sms"/>
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/view"
-            android:text="@string/view_logs"/>
-        <Button
+            android:src="@drawable/view"/>
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/delete"
-            android:text="@string/delete" />
+            android:src="@drawable/delete"/>
 </LinearLayout>
 </LinearLayout>
