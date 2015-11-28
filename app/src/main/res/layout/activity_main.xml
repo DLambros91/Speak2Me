@@ -13,37 +13,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:orientation="horizontal" android:weightSum="1">
-
-        <ImageButton
-            android:layout_width="155dp"
-            android:layout_height="155dp"
-            android:id="@+id/record"
-            android:src="@drawable/selector"
-            android:gravity="center"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:background="@android:color/transparent"/>
-
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/text"
-            android:text="@string/enter_text"
-            android:gravity="center"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:orientation="vertical">
         <EditText
             android:layout_width="match_parent"
@@ -155,5 +124,36 @@
         android:layout_height="wrap_content"
         android:id="@+id/delete"
         android:src="@drawable/delete"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal" android:weightSum="1">
+
+        <ImageButton
+            android:layout_width="155dp"
+            android:layout_height="155dp"
+            android:id="@+id/record"
+            android:src="@drawable/selector"
+            android:gravity="center"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:background="@android:color/transparent"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text"
+            android:text="@string/enter_text"
+            android:gravity="center"/>
     </LinearLayout>
 </LinearLayout>
