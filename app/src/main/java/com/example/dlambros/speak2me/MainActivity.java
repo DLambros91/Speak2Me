@@ -29,6 +29,7 @@ import com.memetix.mst.language.Language;
 import com.memetix.mst.translate.Translate;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity
 
     private String speechLan;
 
+    Locale SPANISH = new Locale("es", "ES");
+
     // SQL Database for storage
     Database myDB;
 
@@ -73,18 +76,17 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         protected Void doInBackground(Void... arg)
         {
 
-                            try {
-                                Translate.setClientId("DDRX");
-                                Translate.setClientSecret("AndHisNameIsJohnCena");
-
-                                // System.out.println("Phrase is " + phrase);
-
-
-                                translation = Translate.execute(phrase, Language.FRENCH).toString();
-                                speakTranslation(translation);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+            try
+            {
+                Translate.setClientId("DDRX");
+                Translate.setClientSecret("AndHisNameIsJohnCena");
+                // System.out.println("Phrase is " + phrase);
+                translation = Translate.execute(phrase, Language.SPANISH).toString();
+                speakTranslation(translation);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
 
             return null;
         }
@@ -100,6 +102,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
 
     private void speakTranslation(String translation)
     {
+        mTextToSpeech.setLanguage(SPANISH);
         mTextToSpeech.speak(translation, TextToSpeech.QUEUE_FLUSH, null, "translation");
     }
 
