@@ -1,16 +1,15 @@
 package com.example.dlambros.speak2me;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,15 +25,22 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.memetix.mst.language.Language;
+import com.memetix.mst.translate.Translate;
+
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
 {
     // String for logging
     private final String TAG = this.getClass().getSimpleName();
 
+    private TextToSpeech mTextToSpeech;
+
     private ImageButton mRecord;
+
+    private String phrase;
+    private String translation;
 
     private CheckBox mEncrypt;
 
@@ -47,7 +53,8 @@ public class MainActivity extends AppCompatActivity
 
     private TextView mTextView;
 
-    private EditText mRecored;
+    private EditText mRecorded;
+    private EditText mTranslated;
 
     private SpeechRecognizer mSpeechRecognizer;
 
@@ -60,29 +67,41 @@ public class MainActivity extends AppCompatActivity
     // SQL Database for storage
     Database myDB;
 
-   /** class RecordTask extends AsyncTask<Void, Void, Void>
+class RecordTask extends AsyncTask<Void, Void, Void>
     {
         @Override
         protected Void doInBackground(Void... arg)
         {
-            new Thread()
-            {
-                public void run()
-                {
-                    MainActivity.this.runOnUiThread(new Runnable()
-                    {
-                        public void run()
-                        {
-                           mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
-                        }
-                    });
-                }
-            }.start();
+
+                            try {
+                                Translate.setClientId("DDRX");
+                                Translate.setClientSecret("AndHisNameIsJohnCena");
+
+                                // System.out.println("Phrase is " + phrase);
+
+
+                                translation = Translate.execute(phrase, Language.FRENCH).toString();
+                                speakTranslation(translation);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
             return null;
         }
 
-    }*/
+        protected void onPostExecute(Void result) {
+            System.out.println("Translation is " + translation);
+            mTranslated.setText(translation);
+            super.onPostExecute(result);
+        }
 
+    }
+
+
+    private void speakTranslation(String translation)
+    {
+        mTextToSpeech.speak(translation, TextToSpeech.QUEUE_FLUSH, null, "translation");
+    }
 
     /**
      * Database Functionality
@@ -92,8 +111,7 @@ public class MainActivity extends AppCompatActivity
         mDelete.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 // Delete all entries from the database
                 myDB.deleteAllData();
             }
@@ -147,15 +165,24 @@ public class MainActivity extends AppCompatActivity
      * Life-cycle Functionality
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         myDB = new Database(this);
-        mRecored = (EditText) findViewById(R.id.recorded);
+        mRecorded = (EditText) findViewById(R.id.recorded);
+        mTranslated = (EditText) findViewById(R.id.translated);
+
         mRecord = (ImageButton) findViewById(R.id.record);
+
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+
+        mTextToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+
+            }
+        });
 
         SpeechRecognitionListener listener = new SpeechRecognitionListener();
         mSpeechRecognizer.setRecognitionListener(listener);
@@ -629,7 +656,9 @@ public class MainActivity extends AppCompatActivity
         {
             ArrayList<String> result = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             if (result != null) {
-                mRecored.setText(result.get(0));
+                phrase = result.get(0).toString();
+                mRecorded.setText(phrase);
+                new RecordTask().execute();
             }
             mSpeechRecognizer.stopListening();
         }
