@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity
 
     private ImageButton mRecord;
 
+    private ImageButton mSwitchSpin;
+
     private String phrase;
     private String translation;
 
@@ -53,7 +55,6 @@ public class MainActivity extends AppCompatActivity
 
     private ImageButton mCopy;
     private ImageButton mCopyTranslation;
-
 
     private ImageButton mView;
     private ImageButton mDelete;
@@ -134,7 +135,7 @@ public class MainActivity extends AppCompatActivity
     //private String speechLan;
     private Locale speechLan;
     private Language translated;
-    private int mposition;
+    private int mpositionTranslation, mpositionRecorded;
     //Locale SPANISH = new Locale("es", "ES");
 
     // SQL Database for storage
@@ -172,7 +173,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
 
     private void speakTranslation(String translation)
     {
-        mTextToSpeech.setLanguage(language[mposition]);
+        mTextToSpeech.setLanguage(language[mpositionTranslation]);
         mTextToSpeech.speak(translation, TextToSpeech.QUEUE_FLUSH, null, "translation");
     }
 
@@ -253,6 +254,17 @@ class RecordTask extends AsyncTask<Void, Void, Void>
 
         mSend = (ImageButton) findViewById(R.id.send);
         mSendTranslation = (ImageButton) findViewById(R.id.sendtranslate);
+
+        mSwitchSpin = (ImageButton) findViewById(R.id.switchSpinner);
+
+        mSwitchSpin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // int temp = mpositionRecorded;
+                inLang.setSelection(mpositionTranslation);
+                outLang.setSelection(mpositionRecorded);
+            }
+        });
 
         mSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -388,6 +400,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         inLang.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mpositionRecorded = position;
                 speechLan = language[position];
                 /*switch (position)
                 {
@@ -638,7 +651,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //Toast.makeText(MainActivity.this, "you selected language at position " + Integer.toString(position), Toast.LENGTH_SHORT).show();
-                mposition = position;
+                mpositionTranslation = position;
                 translated = transto[position];
             }
 
