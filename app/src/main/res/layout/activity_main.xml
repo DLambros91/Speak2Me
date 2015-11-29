@@ -20,6 +20,7 @@
             android:editable="false"
             android:id="@+id/recorded"
             android:textIsSelectable="true"
+            android:focusableInTouchMode="false"
             android:text="@string/default_text"/>
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,6 +42,7 @@
             android:layout_height="wrap_content"
             android:editable="false"
             android:id="@+id/translated"
+            android:focusableInTouchMode="false"
             android:textIsSelectable="true"
             android:text="@string/default2"/>
 

@@ -268,11 +268,12 @@ class RecordTask extends AsyncTask<Void, Void, Void>
             @Override
             public void onClick(View v) {
                 ClipboardManager clipboard = (ClipboardManager)   getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("Copied", mTranslated.getText());
+                ClipData clip = ClipData.newPlainText("Copied", mRecorded.getText());
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(MainActivity.this, "Text copied to clipboard!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Speech copied to clipboard!", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         mCopyTranslation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,6 +282,35 @@ class RecordTask extends AsyncTask<Void, Void, Void>
                 ClipData clip = ClipData.newPlainText("Copied", mTranslated.getText());
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(MainActivity.this, "Translation copied to clipboard!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mTranslated.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (MotionEvent.ACTION_UP == event.getAction()) {
+                    mTranslated.requestFocus();
+                    speakTranslation(translation);
+                }
+                return true; // return
+            }
+        });
+
+        mRecorded.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (MotionEvent.ACTION_UP == event.getAction()) {
+                    mRecorded.requestFocus();
+                    speakTranslation(phrase);
+                }
+                return true; // return
+            }
+        });
+
+        mRecorded.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                speakTranslation(phrase);
             }
         });
 
