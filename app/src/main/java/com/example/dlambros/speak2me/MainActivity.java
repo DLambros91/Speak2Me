@@ -263,6 +263,13 @@ class RecordTask extends AsyncTask<Void, Void, Void>
                // int temp = mpositionRecorded;
                 inLang.setSelection(mpositionTranslation);
                 outLang.setSelection(mpositionRecorded);
+
+                String temp = translation;
+                translation = phrase;
+                phrase = temp;
+
+                mRecorded.setText(phrase);
+                mTranslated.setText(translation);
             }
         });
 
