@@ -70,11 +70,72 @@ public class MainActivity extends AppCompatActivity
 
    private Intent mSpeechRecognizerIntent;
 
+    // Locales for Locale array
+    private Locale locArabic = new Locale("ar","EG");
+    private Locale locBulgarian = new Locale("bg", "BG");
+    private Locale locCatalan = new Locale("ca","ES");
+    private Locale locCzech = new Locale("cs", "CZ");
+    private Locale locDanish = new Locale("da", "DK");
+    private Locale locDutch = new Locale("nl", "BE");
+    private Locale locEstonian = new Locale("et", "EE");
+    private Locale locFinnish = new Locale("fi", "FI");
+    private Locale locGreek = new Locale("el","GR");
+    private Locale locHaitianCreole = new Locale("ht");
+    private Locale locHebrew = new Locale("iw","IL");
+    private Locale locHindi = new Locale("hi","IN");
+    private Locale locHmongdaw = new Locale("hmn");
+    private Locale locHungarian = new Locale("hu","HU");
+    private Locale locIndonesian = new Locale("in","ID");
+    private Locale locLatvian = new Locale("lv","LV");
+    private Locale locLithuanian = new Locale("lt","LT");
+    private Locale locMalay = new Locale("ms");
+    private Locale locNorwegian = new Locale("nb","NO");
+    private Locale locPersian = new Locale("fa");
+    private Locale locPolish = new Locale("pl","PL");
+    private Locale locPortuguese = new Locale("pt","PT");
+    private Locale locRomanian = new Locale("ro","RO");
+    private Locale locRussian = new Locale("ru","RU");
+    private Locale locSlovak = new Locale("sk","SK");
+    private Locale locSlovenian = new Locale("sl","SI");
+    private Locale locSpanish = new Locale("es","US");
+    private Locale locSwedish = new Locale("sv","SE");
+    private Locale locTurkish = new Locale("tr","TR");
+    private Locale locUkrainian = new Locale("uk","UA");
+    private Locale locUrdu = new Locale("ur");
+    private Locale locVietnamese = new Locale("vi","VN");
+
+
+    private Locale[] language = {locArabic, locBulgarian, locCatalan,
+                                 Locale.SIMPLIFIED_CHINESE, Locale.TRADITIONAL_CHINESE,
+                                 locCzech, locDanish, locDutch,Locale.ENGLISH,
+                                 locEstonian, locFinnish, Locale.FRENCH, Locale.GERMAN,
+                                 locGreek, locHaitianCreole, locHebrew, locHindi,
+                                 locHmongdaw, locHungarian, locIndonesian, Locale.ITALIAN,
+                                 Locale.JAPANESE, Locale.KOREAN, locLatvian, locLithuanian,
+                                 locMalay, locNorwegian, locPersian, locPolish,
+                                 locPortuguese, locRomanian, locRussian, locSlovak,
+                                 locSlovenian, locSpanish, locSwedish, Locale.TAIWAN,
+                                 locTurkish, locUkrainian, locUrdu, locVietnamese};
+
+    private Language[] transto = {Language.ARABIC, Language.BULGARIAN, Language.CATALAN,
+                                  Language.CHINESE_SIMPLIFIED, Language.CHINESE_TRADITIONAL,
+                                  Language.CZECH, Language.DANISH, Language.DUTCH, Language.ENGLISH,
+                                  Language.ESTONIAN, Language.FINNISH, Language.FRENCH, Language.GERMAN,
+                                  Language.GREEK, Language.HAITIAN_CREOLE, Language.HEBREW, Language.HINDI,
+                                  Language.HMONG_DAW, Language.HUNGARIAN, Language.INDONESIAN, Language.ITALIAN,
+                                  Language.JAPANESE, Language.KOREAN, Language.LATVIAN, Language.LITHUANIAN,
+                                  Language.MALAY, Language.NORWEGIAN, Language.PERSIAN, Language.POLISH,
+                                  Language.PORTUGUESE, Language.ROMANIAN, Language.RUSSIAN, Language.SLOVAK,
+                                  Language.SLOVENIAN, Language.SPANISH, Language.SWEDISH, Language.THAI,
+                                  Language.TURKISH, Language.UKRAINIAN, Language.URDU, Language.VIETNAMESE};
+
     private boolean pressed = false;
 
-    private String speechLan;
-
-    Locale SPANISH = new Locale("es", "ES");
+    //private String speechLan;
+    private Locale speechLan;
+    private Language translated;
+    private int mposition;
+    //Locale SPANISH = new Locale("es", "ES");
 
     // SQL Database for storage
     Database myDB;
@@ -90,7 +151,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
                 Translate.setClientId("DDRX");
                 Translate.setClientSecret("AndHisNameIsJohnCena");
                 // System.out.println("Phrase is " + phrase);
-                translation = Translate.execute(phrase, Language.CHINESE_TRADITIONAL).toString();
+                translation = Translate.execute(phrase, translated).toString();
                 speakTranslation(translation);
             }
             catch (Exception e) {
@@ -111,7 +172,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
 
     private void speakTranslation(String translation)
     {
-        mTextToSpeech.setLanguage(Locale.CHINESE);
+        mTextToSpeech.setLanguage(language[mposition]);
         mTextToSpeech.speak(translation, TextToSpeech.QUEUE_FLUSH, null, "translation");
     }
 
@@ -255,8 +316,8 @@ class RecordTask extends AsyncTask<Void, Void, Void>
                             mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
                             //new RecordTask().execute();*/
                             mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                            mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, speechLan);
-                            mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, speechLan);
+                            mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, speechLan.toString());
+                            mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
                             mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, speechLan);
                             mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SUPPORTED_LANGUAGES, speechLan);
                             mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, speechLan);
@@ -291,13 +352,14 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         mDelete = (ImageButton) findViewById(R.id.delete);
         inLang = (Spinner) findViewById(R.id.input);
         outLang = (Spinner) findViewById(R.id.output);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.languages, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.nLanguages, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         inLang.setAdapter(adapter);
         inLang.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (position)
+                speechLan = language[position];
+                /*switch (position)
                 {
                     case 0:
                         speechLan = "af";
@@ -420,7 +482,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
                         speechLan = "la";
                         break;
                     case 40:
-                        speechLan = "zh-CN";
+                        speechLan = "zh_CN";
                         break;
                     case 41:
                         speechLan = "zh-TW";
@@ -533,7 +595,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
                     case 77:
                         speechLan = "zu";
                         break;
-                }
+                }*/
             }
 
             @Override
@@ -545,8 +607,9 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         outLang.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this, "you selected language at position " + Integer.toString(position), Toast.LENGTH_SHORT).show();
-
+                //Toast.makeText(MainActivity.this, "you selected language at position " + Integer.toString(position), Toast.LENGTH_SHORT).show();
+                mposition = position;
+                translated = transto[position];
             }
 
             @Override

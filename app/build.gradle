@@ -23,5 +23,5 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.0.1'
-    compile files('/Users/Ryan/Desktop/Speak2Me/libs/microsoft-translator-java-api-0.6.2-jar-with-dependencies.jar')
+    compile files('/home/dlambros/AndroidStudioProjects/Speak2Me/libs/microsoft-translator-java-api-0.6.2-jar-with-dependencies.jar')
 }
