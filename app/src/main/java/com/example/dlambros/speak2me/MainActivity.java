@@ -1,3 +1,23 @@
+/************************************************************************************
+ *      Project:  Speak2Me: Speech to Speech Translation
+ *       Author:  David Lambropoulos, Demetrios Lambropoulos, Ryan Sanichar, Xuan Li
+ *
+ *
+ *       Course:  14:332:453
+ *   Instructor:  Janne Lindqvist
+ *           TA:  Can Liu
+ *     Due Date:  Thursday December 3rd at 11:59PM
+ *
+ *  Description:    Android application that does the following:
+ *                  Speech translation between different languages
+ *                  Takes spoken phrase, converts to text, then translate the text and speaks it back
+ *
+ *
+ *    File Name:  MainActivity.java
+ *  Description:  The main .java file.
+ *
+ *************************************************************************************/
+
 package com.example.dlambros.speak2me;
 
 import android.content.ClipData;
@@ -36,42 +56,77 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
 {
-    // String for logging
+    /**
+     * String for logging
+     */
     private final String TAG = this.getClass().getSimpleName();
 
+    /**
+     * TextToSpeech variable
+     */
     private TextToSpeech mTextToSpeech;
 
+    /**
+     * Buttons used for the following functions:
+     * Recording the voice
+     * Swap the values between the 2 spinners
+     * Send what was spoken through text message (original or translated)
+     * Copy what was said to the user clipboard (original or translated)
+     * View the database which contains the history of translations
+     * Delete the database of translations
+     */
     private ImageButton mRecord;
-
     private ImageButton mSwitchSpin;
+    private ImageButton mSend;
+    private ImageButton mSendTranslation;
+    private ImageButton mCopy;
+    private ImageButton mCopyTranslation;
+    private ImageButton mView;
+    private ImageButton mDelete;
 
+
+    /**
+     * Phrase holds the phrase the user speaks
+     * Translation is the translation of the phrase
+     */
     private String phrase;
     private String translation;
 
     private CheckBox mEncrypt;
 
-    private ImageButton mSend;
-    private ImageButton mSendTranslation;
-
-    private ImageButton mCopy;
-    private ImageButton mCopyTranslation;
-
-    private ImageButton mView;
-    private ImageButton mDelete;
-
+    /**
+     * Spinner inLang holds the language for what the user will speak
+     * Spinner outLang holds the language for what will be translated
+     */
     private Spinner inLang;
     private Spinner outLang;
 
+    /**
+     * Textview tellings the user to press the button to speak
+     */
     private TextView mTextView;
 
+    /**
+     * EditText
+     * One to hold what was recorded
+     * One to hold what was translated
+     */
     private EditText mRecorded;
     private EditText mTranslated;
 
+    /**
+     * Speech Recognizer
+     */
     private SpeechRecognizer mSpeechRecognizer;
 
-   private Intent mSpeechRecognizerIntent;
+    /**
+     * Intent for Speech Recognizer
+     */
+    private Intent mSpeechRecognizerIntent;
 
-    // Locales for Locale array
+    /**
+     * Locales for all the different languages used by the app
+     */
     private Locale locArabic = new Locale("ar","EG");
     private Locale locBulgarian = new Locale("bg", "BG");
     private Locale locCatalan = new Locale("ca","ES");
@@ -105,7 +160,9 @@ public class MainActivity extends AppCompatActivity
     private Locale locUrdu = new Locale("ur");
     private Locale locVietnamese = new Locale("vi","VN");
 
-
+    /**
+     * Array for all the different locales
+     */
     private Locale[] language = {locArabic, locBulgarian, locCatalan,
                                  Locale.SIMPLIFIED_CHINESE, Locale.TRADITIONAL_CHINESE,
                                  locCzech, locDanish, locDutch,Locale.ENGLISH,
@@ -118,6 +175,10 @@ public class MainActivity extends AppCompatActivity
                                  locSlovenian, locSpanish, locSwedish, Locale.TAIWAN,
                                  locTurkish, locUkrainian, locUrdu, locVietnamese};
 
+
+    /**
+     * Array for all the different languages
+     */
     private Language[] transto = {Language.ARABIC, Language.BULGARIAN, Language.CATALAN,
                                   Language.CHINESE_SIMPLIFIED, Language.CHINESE_TRADITIONAL,
                                   Language.CZECH, Language.DANISH, Language.DUTCH, Language.ENGLISH,
@@ -130,30 +191,40 @@ public class MainActivity extends AppCompatActivity
                                   Language.SLOVENIAN, Language.SPANISH, Language.SWEDISH, Language.THAI,
                                   Language.TURKISH, Language.UKRAINIAN, Language.URDU, Language.VIETNAMESE};
 
+    /**
+     * Boolean pressed for the translation button
+     */
     private boolean pressed = false;
 
-    //private String speechLan;
+
     private Locale speechLan;
     private Language translated;
     private int mpositionTranslation, mpositionRecorded;
-    //Locale SPANISH = new Locale("es", "ES");
 
-    // SQL Database for storage
+    /**
+     * SQL Database for storing the history of translations
+     */
     Database myDB;
 
+
+    /**
+     * Async tasks to execute the translation
+     */
 class RecordTask extends AsyncTask<Void, Void, Void>
     {
-        @Override
+        /**
+         * Translation must be done in the background
+         */
         protected Void doInBackground(Void... arg)
         {
 
             try
             {
-                Translate.setClientId("DDRX");
-                Translate.setClientSecret("AndHisNameIsJohnCena");
+                Translate.setClientId("DDRX"); // Set the Translation API Client Key
+                Translate.setClientSecret("AndHisNameIsJohnCena"); // Set the Translation API Secret Key
                 // System.out.println("Phrase is " + phrase);
-                translation = Translate.execute(phrase, translated).toString();
-                speakTranslation(translation);
+                translation = Translate.execute(phrase, translated).toString(); // Execute the translation
+                speakTranslation(translation); // Speak
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -162,15 +233,24 @@ class RecordTask extends AsyncTask<Void, Void, Void>
             return null;
         }
 
+        /**
+         * Once translation is done, show it on the EditText view
+         */
         protected void onPostExecute(Void result) {
-            System.out.println("Translation is " + translation);
+            // System.out.println("Translation is " + translation);
             mTranslated.setText(translation);
             super.onPostExecute(result);
         }
 
     }
 
-
+    /**
+     * Sets the language for the text to speech to whatever the translation spinner is set as
+     * And then performs the speech
+     * @param translation The string that holds the translation of the phrase
+     * @exception None
+     * @return No return value.
+     */
     private void speakTranslation(String translation)
     {
         mTextToSpeech.setLanguage(language[mpositionTranslation]);
@@ -178,7 +258,10 @@ class RecordTask extends AsyncTask<Void, Void, Void>
     }
 
     /**
-     * Database Functionality
+     * Deletes the history of translations from the database
+     * @param arg None
+     * @exception None
+     * @return No return value.
      */
     public void deleteDB()
     {
@@ -192,6 +275,12 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         });
     }
 
+    /**
+     * Views the history of translations from the databases
+     * @param None
+     * @exception None
+     * @return No return value.
+     */
     public void viewLog()
     {
         // Set onClickListener for the view button to display
@@ -227,6 +316,13 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         });
     }
 
+    /**
+     * Shows the contents of the database
+     * @param title A string that holds the title
+     * @param message A string that holds a message to display to the user
+     * @exception None
+     * @return No return value.
+     */
     public void showMessage(String title, String message)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -235,6 +331,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         builder.setMessage(message);
         builder.show();
     }
+
     /**
      * Life-cycle Functionality
      */
@@ -243,24 +340,32 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /**
+         * Initialize the values of the buttons, edittext, database, spinner
+         */
+
         myDB = new Database(this);
         mRecorded = (EditText) findViewById(R.id.recorded);
         mTranslated = (EditText) findViewById(R.id.translated);
-
         mRecord = (ImageButton) findViewById(R.id.record);
-
         mCopy = (ImageButton) findViewById(R.id.copy);
         mCopyTranslation = (ImageButton) findViewById(R.id.copytranslate);
-
         mSend = (ImageButton) findViewById(R.id.send);
         mSendTranslation = (ImageButton) findViewById(R.id.sendtranslate);
-
         mSwitchSpin = (ImageButton) findViewById(R.id.switchSpinner);
+        mTextView = (TextView) findViewById(R.id.text);
+        mSend = (ImageButton) findViewById(R.id.send);
+        mView = (ImageButton) findViewById(R.id.view);
+        mDelete = (ImageButton) findViewById(R.id.delete);
+        inLang = (Spinner) findViewById(R.id.input);
+        outLang = (Spinner) findViewById(R.id.output);
 
+        // Speech recognizer initialized
+
+        // Swap the values of the two spinners in order to do reserve translation
         mSwitchSpin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // int temp = mpositionRecorded;
                 inLang.setSelection(mpositionTranslation);
                 outLang.setSelection(mpositionRecorded);
 
@@ -273,6 +378,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
             }
         });
 
+        // Allows user to send a premade text message with the recently spoken phrase
         mSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -283,10 +389,11 @@ class RecordTask extends AsyncTask<Void, Void, Void>
             }
         });
 
+        // Copy contents of the text to the clipboard
         mCopy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ClipboardManager clipboard = (ClipboardManager)   getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("Copied", mRecorded.getText());
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(MainActivity.this, "Speech copied to clipboard!", Toast.LENGTH_SHORT).show();
@@ -294,16 +401,18 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         });
 
 
+        // Copy contents of the text to the clipboard
         mCopyTranslation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ClipboardManager clipboard = (ClipboardManager)   getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("Copied", mTranslated.getText());
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(MainActivity.this, "Translation copied to clipboard!", Toast.LENGTH_SHORT).show();
             }
         });
 
+        // On the touch of the translated phrase, the texttospeech will speak the translation
         mTranslated.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -315,6 +424,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
             }
         });
 
+        // On the touch of the recorded phrase, the texttospeech will speak the phrase
         mRecorded.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -326,15 +436,18 @@ class RecordTask extends AsyncTask<Void, Void, Void>
             }
         });
 
+        /*
         mRecorded.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 speakTranslation(phrase);
             }
         });
+        */
 
+        // Speech recognizer
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
-
+        // Text to Speech listener
         mTextToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -342,8 +455,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
             }
         });
 
-
-
+        // Speech listener
         SpeechRecognitionListener listener = new SpeechRecognitionListener();
         mSpeechRecognizer.setRecognitionListener(listener);
         mRecord.setOnTouchListener(new View.OnTouchListener() {
@@ -354,16 +466,6 @@ class RecordTask extends AsyncTask<Void, Void, Void>
                     case MotionEvent.ACTION_DOWN: {
                         v.setPressed(true);
                         if (!pressed) {
-                            /**mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                            mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.SIMPLIFIED_CHINESE);
-                            mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                                    speechLan);
-                            mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
-                            mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getClass().getPackage().getName());
-                            pressed = true;
-                            Toast.makeText(MainActivity.this, "Recording Started", Toast.LENGTH_SHORT).show();
-                            mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
-                            //new RecordTask().execute();*/
                             mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                             mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, speechLan.toString());
                             mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -394,13 +496,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
                 return true;
             }
         });
-       // mEncrypt = (CheckBox) findViewById(R.id.encrypt);
-        mTextView = (TextView) findViewById(R.id.text);
-        mSend = (ImageButton) findViewById(R.id.send);
-        mView = (ImageButton) findViewById(R.id.view);
-        mDelete = (ImageButton) findViewById(R.id.delete);
-        inLang = (Spinner) findViewById(R.id.input);
-        outLang = (Spinner) findViewById(R.id.output);
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.nLanguages, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         inLang.setAdapter(adapter);
@@ -409,243 +505,6 @@ class RecordTask extends AsyncTask<Void, Void, Void>
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mpositionRecorded = position;
                 speechLan = language[position];
-                /*switch (position)
-                {
-                    case 0:
-                        speechLan = "af";
-                        break;
-                    case 1:
-                        speechLan = "eu";
-                        break;
-                    case 2:
-                        speechLan = "bg";
-                        break;
-                    case 3:
-                        speechLan = "ca";
-                        break;
-                    case 4:
-                        speechLan = "ar-EG";
-                        break;
-                    case 5:
-                        speechLan = "ar-JO";
-                        break;
-                    case 6:
-                        speechLan = "ar-KW";
-                        break;
-                    case 7:
-                        speechLan = "ar-LB";
-                        break;
-                    case 8:
-                        speechLan = "ar-QA";
-                        break;
-                    case 9:
-                        speechLan = "ar-AE";
-                        break;
-                    case 10:
-                        speechLan = "ar-MA";
-                        break;
-                    case 11:
-                        speechLan = "ar-IQ";
-                        break;
-                    case 12:
-                        speechLan = "ar-DZ";
-                        break;
-                    case 13:
-                        speechLan = "ar-BH";
-                        break;
-                    case 14:
-                        speechLan = "ar-LY";
-                        break;
-                    case 15:
-                        speechLan = "ar-OM";
-                        break;
-                    case 16:
-                        speechLan = "ar-SA";
-                        break;
-                    case 17:
-                        speechLan = "ar-TN";
-                        break;
-                    case 18:
-                        speechLan = "ar-YE";
-                        break;
-                    case 19:
-                        speechLan = "cs";
-                        break;
-                    case 20:
-                        speechLan = "nl-NL";
-                        break;
-                    case 21:
-                        speechLan = "en-AU";
-                        break;
-                    case 22:
-                        speechLan = "en-CA";
-                        break;
-                    case 23:
-                        speechLan = "en-IN";
-                        break;
-                    case 24:
-                        speechLan = "en-NZ";
-                        break;
-                    case 25:
-                        speechLan = "en-ZA";
-                        break;
-                    case 26:
-                        speechLan = "en-GB";
-                        break;
-                    case 27:
-                        speechLan = "en-US";
-                        break;
-                    case 28:
-                        speechLan = "fi";
-                        break;
-                    case 29:
-                        speechLan = "fr-FR";
-                        break;
-                    case 30:
-                        speechLan = "gl";
-                        break;
-                    case 31:
-                        speechLan = "de-DE";
-                        break;
-                    case 32:
-                        speechLan = "he";
-                        break;
-                    case 33:
-                        speechLan = "hu";
-                        break;
-                    case 34:
-                        speechLan = "is";
-                        break;
-                    case 35:
-                        speechLan = "it-IT";
-                        break;
-                    case 36:
-                        speechLan = "id";
-                        break;
-                    case 37:
-                        speechLan = "ja";
-                        break;
-                    case 38:
-                        speechLan = "ko";
-                        break;
-                    case 39:
-                        speechLan = "la";
-                        break;
-                    case 40:
-                        speechLan = "zh_CN";
-                        break;
-                    case 41:
-                        speechLan = "zh-TW";
-                        break;
-                    case 42:
-                        speechLan = "zh-CN";
-                        break;
-                    case 43:
-                        speechLan = "zh-HK";
-                        break;
-                    case 44:
-                        speechLan = "zh-yue";
-                        break;
-                    case 45:
-                        speechLan = "ms-MY";
-                        break;
-                    case 46:
-                        speechLan = "no-NO";
-                        break;
-                    case 47:
-                        speechLan = "pl";
-                        break;
-                    case 48:
-                        speechLan = "xx-piglatin";
-                        break;
-                    case 49:
-                        speechLan = "pt-PT";
-                        break;
-                    case 50:
-                        speechLan = "pt-BR";
-                        break;
-                    case 51:
-                        speechLan = "ro-RO";
-                        break;
-                    case 52:
-                        speechLan = "ru";
-                        break;
-                    case 53:
-                        speechLan = "sr-SP";
-                        break;
-                    case 54:
-                        speechLan = "sk";
-                        break;
-                    case 55:
-                        speechLan = "es-AR";
-                        break;
-                    case 56:
-                        speechLan = "es-BO";
-                        break;
-                    case 57:
-                        speechLan = "es-CL";
-                        break;
-                    case 58:
-                        speechLan = "es-CO";
-                        break;
-                    case 59:
-                        speechLan = "es-CR";
-                        break;
-                    case 60:
-                        speechLan = "es-DO";
-                        break;
-                    case 61:
-                        speechLan = "es-EC";
-                        break;
-                    case 62:
-                        speechLan = "es-SV";
-                        break;
-                    case 63:
-                        speechLan = "es-GT";
-                        break;
-                    case 64:
-                        speechLan = "es-HN";
-                        break;
-                    case 65:
-                        speechLan = "es-MX";
-                        break;
-                    case 66:
-                        speechLan = "es-NI";
-                        break;
-                    case 67:
-                        speechLan = "es-PA";
-                        break;
-                    case 68:
-                        speechLan = "es-PY";
-                        break;
-                    case 69:
-                        speechLan = "es-PE";
-                        break;
-                    case 70:
-                        speechLan = "es-PR";
-                        break;
-                    case 71:
-                        speechLan = "es-ES";
-                        break;
-                    case 72:
-                        speechLan = "es-US";
-                        break;
-                    case 73:
-                        speechLan = "es-UY";
-                        break;
-                    case 74:
-                        speechLan = "es-VE";
-                        break;
-                    case 75:
-                        speechLan = "sv-SE";
-                        break;
-                    case 76:
-                        speechLan = "tr";
-                        break;
-                    case 77:
-                        speechLan = "zu";
-                        break;
-                }*/
             }
 
             @Override
