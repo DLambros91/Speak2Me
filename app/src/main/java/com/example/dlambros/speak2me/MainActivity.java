@@ -251,6 +251,19 @@ class RecordTask extends AsyncTask<Void, Void, Void>
      * @exception None
      * @return No return value.
      */
+    private void speakPhrase(String phrase)
+    {
+        mTextToSpeech.setLanguage(language[mpositionRecorded]);
+        mTextToSpeech.speak(phrase, TextToSpeech.QUEUE_FLUSH, null, "phrase");
+    }
+
+    /**
+     * Sets the language for the text to speech to whatever the translation spinner is set as
+     * And then performs the speech
+     * @param translation The string that holds the translation of the phrase
+     * @exception None
+     * @return No return value.
+     */
     private void speakTranslation(String translation)
     {
         mTextToSpeech.setLanguage(language[mpositionTranslation]);
@@ -375,6 +388,14 @@ class RecordTask extends AsyncTask<Void, Void, Void>
 
                 mRecorded.setText(phrase);
                 mTranslated.setText(translation);
+
+                int temp2 = mpositionTranslation;
+                mpositionTranslation = mpositionRecorded;
+                mpositionRecorded = temp2;
+
+                speechLan = language[mpositionRecorded];
+                translated = transto[mpositionTranslation];
+
             }
         });
 
@@ -430,7 +451,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
             public boolean onTouch(View v, MotionEvent event) {
                 if (MotionEvent.ACTION_UP == event.getAction()) {
                     mRecorded.requestFocus();
-                    speakTranslation(phrase);
+                    speakPhrase(phrase);
                 }
                 return true; // return
             }
