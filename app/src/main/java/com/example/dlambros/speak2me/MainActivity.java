@@ -23,9 +23,9 @@ package com.example.dlambros.speak2me;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
@@ -34,6 +34,7 @@ import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +45,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -248,8 +250,8 @@ class RecordTask extends AsyncTask<Void, Void, Void>
     /**
      * Sets the language for the text to speech to whatever the translation spinner is set as
      * And then performs the speech
-     * @param translation The string that holds the translation of the phrase
-     * @exception None
+     * @param phrase The string that holds the translation of the phrase
+     * @exception No ne
      * @return No return value.
      */
     private void speakPhrase(String phrase)
@@ -299,15 +301,12 @@ class RecordTask extends AsyncTask<Void, Void, Void>
     {
         // Set onClickListener for the view button to display
         // the logs stored in the SQLite database
-        mView.setOnClickListener(new View.OnClickListener()
-        {
+        mView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 // Load the database entries into the Cursor res
                 Cursor res = myDB.getAllData();
-                if (res.getCount() == 0)
-                {
+                if (res.getCount() == 0) {
                     showMessage("Error", "Nothing Found");
                     return;
                 }
@@ -315,13 +314,14 @@ class RecordTask extends AsyncTask<Void, Void, Void>
                 StringBuilder buffer = new StringBuilder();
 
                 // While there are still more entries in the log, load them into the buffer
-                while (res.moveToNext())
-                {
-                   // buffer.append("Id : " + res.getString(0) + "\n");
+                while (res.moveToNext()) {
+                    //buffer.append("Id : " + res.getString(0) + "\n");
+                    buffer.append("\n");
                     buffer.append("Spoken Phrase : " + res.getString(1) + "\n");
                     buffer.append("Translation : " + res.getString(2) + "\n");
                     buffer.append("Detected Language : " + res.getString(3) + "\n");
                     buffer.append("Translated Language : " + res.getString(4) + "\n");
+                    buffer.append("\n");
                 }
 
                 // Show all data
@@ -343,6 +343,42 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         builder.setCancelable(true);
         builder.setTitle(title);
         builder.setMessage(message);
+        builder.show();
+    }
+
+    /**
+     *
+     */
+    public void sendMessageDialogBox(String sample)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle("Send Message");
+
+        final EditText phoneNumber = new EditText(this);
+        final EditText Message = new EditText(this);
+
+        phoneNumber.setHint("xxxxxxxxxx");
+
+        LinearLayout layout = new LinearLayout(getApplicationContext());
+
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.addView(phoneNumber);
+        layout.addView(Message);
+        builder.setView(layout);
+
+        builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton){
+
+            }
+        });
+
         builder.show();
     }
 
@@ -404,10 +440,12 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         mSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                sendIntent.setData(Uri.parse("sms:"));
-                sendIntent.putExtra("sms_body", mRecorded.getText());
-                startActivity(sendIntent);
+                //Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                //sendIntent.setData(Uri.parse("sms:"));
+                //sendIntent.putExtra("sms_body", mRecorded.getText());
+                //startActivity(sendIntent);
+                sendMessageDialogBox("Message");
+                //sendSms();
             }
         });
 
@@ -550,6 +588,12 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         });
         viewLog();
         deleteDB();
+    }
+
+    protected void sendSms()
+    {
+        SmsManager manager = SmsManager.getDefault();
+        manager.sendTextMessage("9085481212",null,"EAT my BALLS",null,null);
     }
 
     @Override
