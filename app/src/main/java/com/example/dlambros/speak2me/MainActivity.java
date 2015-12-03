@@ -35,6 +35,7 @@ import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -332,7 +333,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
 
     /**
      * Shows the contents of the database
-     * @param title A string that holds the title
+     * @param title - A string that holds the title
      * @param message A string that holds a message to display to the user
      * @exception None
      * @return No return value.
@@ -349,7 +350,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
     /**
      *
      */
-    public void sendMessageDialogBox(String sample)
+    public void sendMessageDialogBox(String message)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
@@ -358,7 +359,25 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         final EditText phoneNumber = new EditText(this);
         final EditText Message = new EditText(this);
 
+        phoneNumber.setInputType(InputType.TYPE_CLASS_NUMBER);
         phoneNumber.setHint("xxxxxxxxxx");
+
+        if(message.equalsIgnoreCase("Recorded text…"))
+        {
+            Message.setText("");
+        }
+        else if(message.equalsIgnoreCase("Translated to…"))
+        {
+            Message.setText("");
+        }
+        else if(message == null)
+        {
+            Message.setText("");
+        }
+        else
+        {
+            Message.setText(message);
+        }
 
         LinearLayout layout = new LinearLayout(getApplicationContext());
 
@@ -369,12 +388,12 @@ class RecordTask extends AsyncTask<Void, Void, Void>
 
         builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-
+                sendSms(phoneNumber.getText().toString(), Message.getText().toString());
             }
         });
 
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton){
+            public void onClick(DialogInterface dialog, int whichButton) {
 
             }
         });
@@ -440,12 +459,14 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         mSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                //sendIntent.setData(Uri.parse("sms:"));
-                //sendIntent.putExtra("sms_body", mRecorded.getText());
-                //startActivity(sendIntent);
-                sendMessageDialogBox("Message");
-                //sendSms();
+                sendMessageDialogBox(mRecorded.getText().toString());
+            }
+        });
+
+        mSendTranslation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendMessageDialogBox(mTranslated.getText().toString());
             }
         });
 
@@ -590,10 +611,26 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         deleteDB();
     }
 
-    protected void sendSms()
+    protected void sendSms(String phoneNumber, String message)
     {
+        if(phoneNumber == null)
+        {
+            Toast.makeText(MainActivity.this, "No phone number entered!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else if(phoneNumber.equalsIgnoreCase("xxxxxxxxxx"))
+        {
+            Toast.makeText(MainActivity.this, "No phone number entered!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else if(phoneNumber.length() != 10)
+        {
+            Toast.makeText(MainActivity.this, "Not valid format!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         SmsManager manager = SmsManager.getDefault();
-        manager.sendTextMessage("9085481212",null,"EAT my BALLS",null,null);
+        manager.sendTextMessage(phoneNumber, null, message, null, null);
     }
 
     @Override
