@@ -239,6 +239,7 @@ class RecordTask extends AsyncTask<Void, Void, Void>
         protected void onPostExecute(Void result) {
             // System.out.println("Translation is " + translation);
             mTranslated.setText(translation);
+            myDB.insertData(phrase,translation,language[mpositionRecorded].getDisplayName(),language[mpositionTranslation].getDisplayName());
             super.onPostExecute(result);
         }
 
@@ -316,9 +317,9 @@ class RecordTask extends AsyncTask<Void, Void, Void>
                 // While there are still more entries in the log, load them into the buffer
                 while (res.moveToNext())
                 {
-                    buffer.append("Id : " + res.getString(0) + "\n");
-                    buffer.append("Received Text : " + res.getString(1) + "\n");
-                    buffer.append("Date : " + res.getString(2) + "\n");
+                   // buffer.append("Id : " + res.getString(0) + "\n");
+                    buffer.append("Spoken Phrase : " + res.getString(1) + "\n");
+                    buffer.append("Translation : " + res.getString(2) + "\n");
                     buffer.append("Detected Language : " + res.getString(3) + "\n");
                     buffer.append("Translated Language : " + res.getString(4) + "\n");
                 }
